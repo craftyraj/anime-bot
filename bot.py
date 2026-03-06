@@ -45,7 +45,7 @@ def menu(message):
         bot.send_message(message.chat.id, "Spin feature coming soon")
 
     elif message.text == "🆘 Support":
-        bot.send_message(message.chat.id, "Contact admin: @yourusername")
+        bot.send_message(message.chat.id, "Contact admin: @zgspidy)
 
 
 bot.infinity_polling()
