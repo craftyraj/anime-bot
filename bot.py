@@ -1,51 +1,47 @@
-import telebot
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update, ReplyKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 TOKEN = "8780425601:AAFUWTh4exyStxtN5I26uawerrFKXmVVNAg"
 
-bot = telebot.TeleBot(TOKEN)
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-def main_menu():
-    markup = ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add("🎬 Anime Library", "👤 Profile")
-    markup.add("💰 Add Balance", "📦 My Purchases")
-    markup.add("🎁 Referral", "🎡 Lucky Spin")
-    markup.add("🆘 Support")
-    return markup
+    user = update.effective_user.first_name
 
+    keyboard = [
+        ["🛍 Shop Anime"],
+        ["📦 My Library", "👤 Profile"],
+        ["💰 Add Balance", "🎁 Referral"],
+        ["🎰 Lucky Spin"],
+        ["🆘 Support"]
+    ]
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.send_message(
-        message.chat.id,
-        "🔥 Welcome to Anime World Store",
-        reply_markup=main_menu()
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
+    text = f"""
+🎌 *ANIME STREAMING STORE*
+
+👋 Welcome *{user}*
+
+⭐ *FEATURES*
+
+🎬 Full Anime Season Access
+📺 Watch All Episodes Anytime
+⚡ Instant Access After Payment
+🔒 Secure Payment System
+🎁 Referral Rewards
+🏆 24/7 Support
+
+🚀 Click *Shop Anime* to explore anime library!
+"""
+
+    await update.message.reply_text(
+        text,
+        reply_markup=reply_markup,
+        parse_mode="Markdown"
     )
 
+app = ApplicationBuilder().token(TOKEN).build()
 
-@bot.message_handler(func=lambda m: True)
-def menu(message):
+app.add_handler(CommandHandler("start", start))
 
-    if message.text == "🎬 Anime Library":
-        bot.send_message(message.chat.id, "Anime list coming soon...")
-
-    elif message.text == "👤 Profile":
-        bot.send_message(message.chat.id, f"User ID: {message.from_user.id}")
-
-    elif message.text == "💰 Add Balance":
-        bot.send_message(message.chat.id, "UPI payment coming soon")
-
-    elif message.text == "📦 My Purchases":
-        bot.send_message(message.chat.id, "You haven't purchased anything yet")
-
-    elif message.text == "🎁 Referral":
-        bot.send_message(message.chat.id, "Referral system coming soon")
-
-    elif message.text == "🎡 Lucky Spin":
-        bot.send_message(message.chat.id, "Spin feature coming soon")
-
-    elif message.text == "🆘 Support":
-        bot.send_message(message.chat.id, "Contact admin: @zgspidy)
-
-
-bot.infinity_polling()
+app.run_polling()
